@@ -76,11 +76,11 @@ jobs:
     - name: Archive for release
       run: |
         cd libgit2-0.25.1
-        zip -r ${GIHUB_WORKSPACE}/libgi2-dev-${{ matrix.variant.platform }}.zip libgit2
-        cd ..
+        zip -r ${GIHUB_WORKSPACE}/libgit2-dev-${{ matrix.variant.platform }}.zip libgit2
+        cd ${GIHUB_WORKSPACE}
         mkdir artifacts
         cp libgit2-0.25.1/libgit2/lib/libgit2.* artifacts/
-        zip -rj libgit2-${{ matrix.variant.platform }}.zip artifacts
+        zip -rj ${GIHUB_WORKSPACE}/libgit2-${{ matrix.variant.platform }}.zip artifacts
 
     - name: Updload library
       uses: actions/upload-artifact@v2
