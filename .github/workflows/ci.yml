@@ -1,0 +1,124 @@
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches:
+        - master
+        - akg
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build Unixes
+    runs-on: ${{ matrix.variant.os }}
+    strategy:
+      matrix:
+        variant:
+          - os: ubuntu-18.04
+            platform: linux
+          - os: macos-latest
+            platform: mac
+
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    # Retrieve libgit2 source
+    - name: Retrieve libgit2
+      run: |
+        wget https://github.com/libgit2/libgit2/archive/v0.25.1.tar.gz
+        tar xvzf v0.25.1.tar.gz
+
+    - name: Retrieve openssl libraries (linux)
+      if: matrix.variant.platform == 'linux'
+      run: |
+        wget https://github.com/feenkcom/libssl_build/releases/download/v1.1.1g-ubuntu-18.04/libssl-dev-ubuntu-18.04.zip
+        unzip libssl-dev-ubuntu-18.04.zip
+
+    - name: Retrieve openssl libraries (mac)
+      if: matrix.variant.platform == 'mac'
+      run: |
+        wget https://github.com/feenkcom/libssl_build/releases/download/v1.1.1g-macos-latest/libssl-dev-macos-latest.zip
+        unzip libssl-dev-macos-latest.zip
+
+    - name: Retrieve libssh2 libraries (linux)
+      if: matrix.variant.platform == 'linux'
+      run: |
+        wget https://github.com/feenkcom/libssh2_build/releases/download/v.1.9.0-linux-1/libssh2-dev-linux.zip
+        unzip ../libssh2-dev-linux.zip
+        sed -i "s|prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
+
+    - name: Retrieve libssh2 libraries (mac)
+      if: matrix.variant.platform == 'mac'
+      run: |
+        wget https://github.com/feenkcom/libssh2_build/releases/download/v.1.9.0-mac-dev1/libssh2-dev-mac.zip
+        unzip ../libssh2-dev-mac.zip
+        sed -i "s|prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
+
+    - name: Compile
+      env:
+        OPENSSL_ROOT_DIR: ${GITHUB_WORKSPACE}/openssl-1.1.1g
+        OPENSSL_LIB_DIR: ${GITHUB_WORKSPACE}/openssl-1.1.1g
+        OPENSSL_DIR: ${GITHUB_WORKSPACE}/openssl-1.1.1g
+        PKG_CONFIG_PATH: ${GITHUB_WORKSPACE}/libssh2:${GITHUB_WORKSPACE}/openssl-1.1.1g
+      run: |
+        cd libgit2-0.25.1
+        mkdir build
+        cd build
+        cmake -DCMAKE_INSTALL_PREFIX=../libgit2 ..
+        cmake --build .
+        cmake --install .
+
+    - name: Archive for release
+      run: |
+        cd libgit2-0.25.1
+        zip -r ${GIHUB_WORKSPACE}/libgi2-dev-${{ matrix.variant.platform }}.zip libgit2
+        cd ..
+        mkdir artifacts
+        cp libgit2-0.25.1/libgit2/lib/libgit2.* artifacts/
+        zip -rj libgit2-${{ matrix.variant.platform }}.zip artifacts
+
+    - name: Updload library
+      uses: actions/upload-artifact@v2
+      with:
+        name: libgit2-${{ matrix.variant.platform }}
+        path: artifacts
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v0.25.1-${{ matrix.variant.platform }}
+        release_name: v0.25.1-${{ matrix.variant.platform }}
+        body: |
+          libgit2 library for Pharo VM
+        draft: true
+        prerelease: true
+
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./libgit2-${{ matrix.variant.platform }}.zip
+        asset_name: libgit2-${{ matrix.variant.platform }}.zip
+        asset_content_type: application/zip
+
+    - name: Upload -dev Release Asset
+      id: upload-dev-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./libgit2-dev-${{ matrix.variant.platform }}.zip
+        asset_name: libgit2-dev-${{ matrix.variant.platform }}.zip
+        asset_content_type: application/zip
+
