@@ -47,14 +47,14 @@ jobs:
     - name: Retrieve libssh2 libraries (linux)
       if: matrix.variant.platform == 'linux'
       run: |
-        wget https://github.com/feenkcom/libssh2_build/releases/download/v.1.9.0-linux-1/libssh2-dev-linux.zip
+        wget https://github.com/feenkcom/libssh2_build/releases/download/v.1.9.0-linux/libssh2-dev-linux.zip
         unzip ../libssh2-dev-linux.zip
         sed -i "s|prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
 
     - name: Retrieve libssh2 libraries (mac)
       if: matrix.variant.platform == 'mac'
       run: |
-        wget https://github.com/feenkcom/libssh2_build/releases/download/v.1.9.0-mac-dev1/libssh2-dev-mac.zip
+        wget https://github.com/feenkcom/libssh2_build/releases/download/v.1.9.0-mac/libssh2-dev-mac.zip
         unzip ../libssh2-dev-mac.zip
         sed -i "s|prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
 
