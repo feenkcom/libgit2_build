@@ -49,6 +49,7 @@ jobs:
       run: |
         wget https://github.com/feenkcom/libssh2_build/releases/download/v.1.9.0-linux/libssh2-dev-linux.zip
         unzip libssh2-dev-linux.zip
+        echo "WS=${GITHUB_WORKSPACE}"
         sed -i "s|prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
 
     - name: Retrieve libssh2 libraries (mac)
@@ -56,7 +57,7 @@ jobs:
       run: |
         wget https://github.com/feenkcom/libssh2_build/releases/download/v.1.9.0-mac/libssh2-dev-mac.zip
         unzip libssh2-dev-mac.zip
-        sed -i "s|prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
+        sed -i "" "s|prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
 
     - name: Compile
       env:
