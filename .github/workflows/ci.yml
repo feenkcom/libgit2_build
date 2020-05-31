@@ -58,10 +58,12 @@ jobs:
         unzip libssh2-dev-mac.zip
         sed -i "" "s|^prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
 
+    - name: Set pkg path
+      run: echo ::set-env name=PKG_CONFIG_PATH::$(echo "${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig:${GITHUB_WORKSPACE}/openssl-1.1.1g/lib/pkgconfig")
+
     - name: Compile
-      env:
-        PKG_CONFIG_PATH: /home/runner/work/libgit2_build/libgit2_build/libssh2/lib/pkgconfig:/home/runner/work/libgit2_build/libgit2_build/openssl-1.1.1g/lib/pkgconfig
       run: |
+        echo "PKG_CONFIG_PATH=${PKG_CONFIG_PATH}"
         cd libgit2-0.25.1
         mkdir build
         cd build
