@@ -50,14 +50,14 @@ jobs:
         wget https://github.com/feenkcom/libssh2_build/releases/download/v.1.9.0-linux/libssh2-dev-linux.zip
         unzip libssh2-dev-linux.zip
         echo "WS=${GITHUB_WORKSPACE}"
-        sed -i "s|prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
+        sed -i "s|^prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
 
     - name: Retrieve libssh2 libraries (mac)
       if: matrix.variant.platform == 'mac'
       run: |
         wget https://github.com/feenkcom/libssh2_build/releases/download/v.1.9.0-mac/libssh2-dev-mac.zip
         unzip libssh2-dev-mac.zip
-        sed -i "" "s|prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
+        sed -i "" "s|^prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
 
     - name: Compile
       env:
@@ -68,6 +68,7 @@ jobs:
       run: |
         ls -l ${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig
         ls -l ${GITHUB_WORKSPACE}/openssl-1.1.1g/lib/pkgconfig
+        echo "PKG_CONFIG_PATH=${PKG_CONFIG_PATH}"
         pkg-config --modversion libcrypto
         cat ${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig/libssh2.pc
         pkg-config --modversion libssh2
