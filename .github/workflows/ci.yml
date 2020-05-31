@@ -19,6 +19,8 @@ jobs:
         variant:
           - os: ubuntu-18.04
             platform: linux
+          - os: macos-latest
+            platform: mac
 
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -58,18 +60,8 @@ jobs:
 
     - name: Compile
       env:
-        OPENSSL_ROOT_DIR: ${GITHUB_WORKSPACE}/openssl-1.1.1g
-        OPENSSL_LIB_DIR: ${GITHUB_WORKSPACE}/openssl-1.1.1g
-        OPENSSL_DIR: ${GITHUB_WORKSPACE}/openssl-1.1.1g
         PKG_CONFIG_PATH: /home/runner/work/libgit2_build/libgit2_build/libssh2/lib/pkgconfig:/home/runner/work/libgit2_build/libgit2_build/openssl-1.1.1g/lib/pkgconfig
       run: |
-        ls -l ${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig
-        ls -l ${GITHUB_WORKSPACE}/openssl-1.1.1g/lib/pkgconfig
-        echo "WS=${GITHUB_WORKSPACE}"
-        echo "PKG_CONFIG_PATH=${PKG_CONFIG_PATH}"
-        pkg-config --modversion libcrypto
-        cat ${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig/libssh2.pc
-        pkg-config --modversion libssh2
         cd libgit2-0.25.1
         mkdir build
         cd build
