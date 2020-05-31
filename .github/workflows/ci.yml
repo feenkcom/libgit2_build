@@ -69,6 +69,7 @@ jobs:
         ls -l ${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig
         ls -l ${GITHUB_WORKSPACE}/openssl-1.1.1g/lib/pkgconfig
         pkg-config --modversion libcrypto
+        cat ${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig/libssh2.pc
         pkg-config --modversion libssh2
         cd libgit2-0.25.1
         mkdir build
