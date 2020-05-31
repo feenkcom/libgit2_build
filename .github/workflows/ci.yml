@@ -66,6 +66,9 @@ jobs:
         OPENSSL_DIR: ${GITHUB_WORKSPACE}/openssl-1.1.1g
         PKG_CONFIG_PATH: ${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig:${GITHUB_WORKSPACE}/openssl-1.1.1g/lib/pkgconfig
       run: |
+        ls -l ${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig
+        ls -l ${GITHUB_WORKSPACE}/openssl-1.1.1g/lib/pkgconfig
+        exit 1
         cd libgit2-0.25.1
         mkdir build
         cd build
