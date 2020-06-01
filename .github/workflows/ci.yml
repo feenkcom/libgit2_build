@@ -25,7 +25,7 @@ jobs:
     steps:
     - name: Install dependencies
       if: matrix.variant.os == 'macos-latest'
-      run: brew install pkg-config libgcrypt
+      run: brew install pkg-config
 
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
@@ -63,7 +63,12 @@ jobs:
         sed -i "" "s|^prefix=.*|prefix=${GITHUB_WORKSPACE}/libssh2|g" libssh2/lib/pkgconfig/libssh2.pc
 
     - name: Set pkg path
-      run: echo ::set-env name=PKG_CONFIG_PATH::$(echo "${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig:${GITHUB_WORKSPACE}/openssl-1.1.1g/lib/pkgconfig")
+      run: |
+        echo ::set-env name=PKG_CONFIG_PATH::$(echo "${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig:${GITHUB_WORKSPACE}/openssl-1.1.1g/lib/pkgconfig")
+        pkg-config --modversion openssl
+        pkg-config --modversion libssl
+        pkg-config --modversion libcrypto
+        pkg-config --modversion libssh2
 
     - name: Compile
       run: |
