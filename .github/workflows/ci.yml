@@ -72,14 +72,23 @@ jobs:
         pkg-config --modversion libssl
         pkg-config --modversion libcrypto
         pkg-config --modversion libssh2
+        pkg-config --libs libssh2
 
-    - name: Compile
+    - name: Configure
       run: |
         cd libgit2-0.25.1
         mkdir build
         cd build
         cmake -DCMAKE_INSTALL_PREFIX=../libgit2 ..
+
+    - name: Compile
+      run: |
+        cd libgit2-0.25.1/build
         cmake --build .
+
+    - name: Install
+      run: |
+        cd libgit2-0.25.1/build
         cmake --install .
 
     - name: Archive for release
