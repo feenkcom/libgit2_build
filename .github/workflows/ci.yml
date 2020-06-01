@@ -25,7 +25,7 @@ jobs:
     steps:
     - name: Install dependencies
       if: matrix.variant.os == 'macos-latest'
-      run: brew install pkg-config
+      run: brew install pkg-config libgcrypt
 
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
