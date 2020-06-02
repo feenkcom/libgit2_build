@@ -79,9 +79,7 @@ jobs:
         cd libgit2-0.25.1
         mkdir build
         cd build
-        cmake -DCMAKE_INSTALL_PREFIX=../libgit2 .. \
-            -DCMAKE_MACOSX_RPATH=ON \
-            -DCMAKE_INSTALL_RPATH="@executable_path/Plugins"
+        cmake -DCMAKE_INSTALL_PREFIX=../libgit2 ..
 
     - name: Compile
       run: |
@@ -92,6 +90,14 @@ jobs:
       run: |
         cd libgit2-0.25.1/build
         cmake --install .
+
+    - name: Library search paths (mac)
+      if: matrix.variant.platform == 'mac'
+      run: |
+        cd libgit2-0.25.1/libgit2/lib
+        ls -l
+        for i in libgit2.*; do install_name_tool -change libssh2.1.dylib @executable_path/Plugins/libssh2.1.dylib $i; done
+        otool -L libgit2.*
 
     - name: Archive for release
       run: |
