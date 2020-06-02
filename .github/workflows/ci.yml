@@ -79,7 +79,9 @@ jobs:
         cd libgit2-0.25.1
         mkdir build
         cd build
-        cmake -DCMAKE_INSTALL_PREFIX=../libgit2 ..
+        cmake -DCMAKE_INSTALL_PREFIX=../libgit2 .. \
+            -DCMAKE_MACOSX_RPATH=ON \
+            -DCMAKE_INSTALL_RPATH="@executable_path/Plugins"
 
     - name: Compile
       run: |
