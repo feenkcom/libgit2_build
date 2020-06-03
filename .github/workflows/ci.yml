@@ -91,22 +91,21 @@ jobs:
         cd libgit2-0.25.1/build
         cmake --install .
 
-    - name: Library search paths (mac)
+    - name: Mac id correction
       if: matrix.variant.platform == 'mac'
       run: |
         cd libgit2-0.25.1/libgit2/lib
-        ls -l
-        for i in libgit2.*; do install_name_tool -change libssh2.1.dylib @executable_path/Plugins/libssh2.1.dylib $i; done
+        for i in libgit2.*; do install_name_tool -id @executable_path/Plugins/$i $i; done
         otool -L libgit2.*
 
     - name: Archive for release
       run: |
         cd libgit2-0.25.1
-        zip -r ${GITHUB_WORKSPACE}/libgit2-dev-${{ matrix.variant.platform }}.zip libgit2
+        zip -ry ${GITHUB_WORKSPACE}/libgit2-dev-${{ matrix.variant.platform }}.zip libgit2
         cd ${GITHUB_WORKSPACE}
         mkdir artifacts
         cp libgit2-0.25.1/libgit2/lib/libgit2.* artifacts/
-        zip -rj ${GITHUB_WORKSPACE}/libgit2-${{ matrix.variant.platform }}.zip artifacts
+        zip -rjy ${GITHUB_WORKSPACE}/libgit2-${{ matrix.variant.platform }}.zip artifacts
 
     - name: Updload library
       uses: actions/upload-artifact@v2
@@ -124,7 +123,7 @@ jobs:
         release_name: v0.25.1-${{ matrix.variant.platform }}
         body: |
           libgit2 library for Pharo VM
-        draft: true
+        draft: false
         prerelease: true
 
     - name: Upload Release Asset
