@@ -91,11 +91,14 @@ jobs:
         cd libgit2-0.25.1/build
         cmake --install .
 
-    - name: Mac id correction
+    - name: Mac id and path correction
       if: matrix.variant.platform == 'mac'
       run: |
         cd libgit2-0.25.1/libgit2/lib
         for i in libgit2.*; do install_name_tool -id @executable_path/Plugins/$i $i; done
+        for i in libgit2.*; do install_name_tool -change libssh2.dylib @executable_path/Plugins/libssh2.dylib $i; done
+        for i in libgit2.*; do install_name_tool -change libssh2.1.dylib @executable_path/Plugins/libssh2.1.dylib $i; done
+        for i in libgit2.*; do install_name_tool -change libssh2.1.0.1.dylib @executable_path/Plugins/libssh2.1.0.1.dylib $i; done
         otool -L libgit2.*
 
     - name: Archive for release
