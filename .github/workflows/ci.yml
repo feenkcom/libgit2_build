@@ -75,7 +75,7 @@ jobs:
         sed -i "" "s|-lssh2|-L/usr/local/lib -lssh2|g" libssh2/lib/pkgconfig/libssh2.pc
 
     - name: Set pkg path
-      run: echo ::set-env name=PKG_CONFIG_PATH::$(echo "${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig:${GITHUB_WORKSPACE}/openssl-1.1.1g/lib/pkgconfig")
+      run: echo "PKG_CONFIG_PATH=${GITHUB_WORKSPACE}/libssh2/lib/pkgconfig:${GITHUB_WORKSPACE}/openssl-1.1.1g/lib/pkgconfig" >> $GITHUB_ENV
 
     - name: Check pkg path
       run: |
