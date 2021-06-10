@@ -129,36 +129,13 @@ jobs:
 
     - name: Create Release
       id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: ncipollo/release-action@v1
       with:
-        tag_name: v0.25.1-${{ matrix.variant.platform }}-${{ github.sha }}
-        release_name: v0.25.1-${{ matrix.variant.platform }}-${{ github.sha }}
-        body: |
-          libgit2 library for Pharo VM
+        allowUpdates: true # set to false if you do not want to allow updates on existing releases
+        name: v0.25.1-${{ matrix.variant.platform }}
         draft: false
         prerelease: true
-
-    - name: Upload Release Asset
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./libgit2-${{ matrix.variant.platform }}.zip
-        asset_name: libgit2-${{ matrix.variant.platform }}.zip
-        asset_content_type: application/zip
-
-    - name: Upload -dev Release Asset
-      id: upload-dev-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./libgit2-dev-${{ matrix.variant.platform }}.zip
-        asset_name: libgit2-dev-${{ matrix.variant.platform }}.zip
-        asset_content_type: application/zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: './libgit2-${{ matrix.variant.platform }}.zip,./libgit2-dev-${{ matrix.variant.platform }}.zip'
+        tag: v0.25.1-${{ matrix.variant.platform }}
 
